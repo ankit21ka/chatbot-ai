@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ankit chatbox</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap');
+
+    :root {
+      --color-bg: #f0f3fb;
+      --color-primary: #2c2a5c; /* dark indigo-blue */
+      --color-secondary: #6b7280;
+      --color-accent: #8a79ff; /* soft purple */
+      --color-accent-light: #c6bffa;
+      --color-chatbg: #eef1fb;
+      --color-bubble-user-bg: #8a79ff;
+      --color-bubble-user-text: #ffffff;
+      --color-bubble-bot-bg: #d7d9f3;
+      --color-bubble-bot-text: #2c2a5c;
+      --border-radius: 0.75rem;
+      --shadow-light: 0 5px 15px rgba(80, 71, 176, 0.15);
+      --transition: 0.3s ease;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Inter", sans-serif;
+      background-color: var(--color-bg);
+      color: var(--color-secondary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      scroll-behavior: smooth;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Sticky Header */
+    header {
+      position: sticky;
+      top: 0;
+      background: var(--color-bg);
+      padding: 1rem 4rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--color-accent-light);
+      box-shadow: var(--shadow-light);
+      z-index: 20;
+      user-select: none;
+    }
+
+    header .logo {
+      font-weight: 800;
+      font-size: 1.75rem;
+      color: var(--color-primary);
+      letter-spacing: 0.03em;
+    }
+
+    nav a {
+      margin-left: 2rem;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1rem;
+      color: var(--color-secondary);
+      transition: color var(--transition);
+      position: relative;
+    }
+    nav a:hover,
+    nav a:focus {
+      color: var(--color-accent);
+      outline: none;
+    }
+    nav a::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background-color: var(--color-accent);
+      transition: width 0.3s ease;
+    }
+    nav a:hover::after,
+    nav a:focus::after {
+      width: 100%;
+    }
+
+    main {
+      max-width: 1200px;
+      margin: 5rem auto 4rem;
+      padding: 0 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    main h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      color: var(--color-primary);
+      margin-bottom: 1rem;
+      line-height: 1.1;
+      max-width: 720px;
+      user-select: none;
+    }
+    main p {
+      font-size: 1.25rem;
+      max-width: 560px;
+      color: var(--color-secondary);
+      margin-bottom: 3rem;
+      line-height: 1.6;
+      user-select: none;
+    }
+    .btn-primary {
+      background-image: linear-gradient(90deg, var(--color-accent), var(--color-primary));
+      color: white;
+      font-weight: 700;
+      padding: 1rem 3rem;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 1.25rem;
+      cursor: pointer;
+      transition: background-position 0.5s ease;
+      background-size: 200% 100%;
+      background-position: left;
+      user-select: none;
+      letter-spacing: 0.04em;
+      box-shadow: var(--shadow-light);
+    }
+    .btn-primary:hover,
+    .btn-primary:focus {
+      background-position: right;
+      outline: none;
+    }
+
+    /* Feature Sections for WhatsApp, Paytm, Google Maps */
+    section.features {
+      margin: 6rem auto 8rem;
+      max-width: 1200px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(320px,1fr));
+      gap: 2.5rem;
+      padding: 0 2rem;
+    }
+    .feature-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-light);
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: default;
+      user-select: none;
+    }
+    .feature-card:hover,
+    .feature-card:focus-within {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 24px rgba(80,71,176,0.25);
+      outline: none;
+    }
+    .feature-icon {
+      font-size: 40px;
+      color: var(--color-accent);
+      margin-bottom: 1.5rem;
+      user-select: none;
+    }
+    .feature-title {
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: var(--color-primary);
+      margin-bottom: 1rem;
+      user-select: text;
+    }
+    .feature-desc {
+      font-size: 1rem;
+      color: var(--color-secondary);
+      line-height: 1.5;
+      flex-grow: 1;
+      user-select: text;
+    }
+    .feature-btn {
+      margin-top: 1.5rem;
+      background: var(--color-primary);
+      color: white;
+      border: none;
+      border-radius: var(--border-radius);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-light);
+      transition: background-color 0.3s ease;
+      width: fit-content;
+      user-select: none;
+    }
+    .feature-btn:hover,
+    .feature-btn:focus {
+      background: var(--color-accent);
+      outline: none;
+    }
+
+    /* Chatbot widget container */
+    .chatbot-widget {
+      position: fixed;
+      bottom: 2.5rem;
+      right: 2.5rem;
+      width: 360px;
+      max-width: 95vw;
+      height: 520px;
+      background-color: var(--color-chatbg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 12px 28px rgba(80,71,176,0.2);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      font-size: 0.925rem;
+      z-index: 100;
+      user-select: none;
+      transition: box-shadow 0.3s ease;
+    }
+    .chatbot-widget:hover {
+      box-shadow: 0 18px 38px rgba(80,71,176,0.35);
+    }
+
+    .chatbot-header {
+      background: white;
+      padding: 1.25rem 1.75rem;
+      font-weight: 800;
+      font-size: 1.35rem;
+      color: var(--color-primary);
+      border-bottom: 1px solid #d5d7f1;
+      user-select: none;
+      box-shadow: inset 0 -1px 2px rgba(0,0,0,0.05);
+      letter-spacing: 0.025em;
+    }
+
+    .chatbot-messages {
+      flex-grow: 1;
+      padding: 1.25rem 1.75rem;
+      overflow-y: auto;
+      background: var(--color-chatbg);
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      scrollbar-width: thin;
+      scrollbar-color: var(--color-accent) transparent;
+    }
+    .chatbot-messages::-webkit-scrollbar {
+      width: 8px;
+    }
+    .chatbot-messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .chatbot-messages::-webkit-scrollbar-thumb {
+      background-color: var(--color-accent);
+      border-radius: 4px;
+    }
+
+    .message {
+      max-width: 75%;
+      padding: 0.7rem 1.1rem;
+      border-radius: var(--border-radius);
+      word-wrap: break-word;
+      animation: fadeIn 0.35s ease forwards;
+      box-shadow: var(--shadow-light);
+      user-select: text;
+      white-space: pre-line;
+      font-weight: 500;
+    }
+    .message.bot {
+      background-color: var(--color-bubble-bot-bg);
+      color: var(--color-bubble-bot-text);
+      border-bottom-left-radius: 0;
+      align-self: flex-start;
+    }
+    .message.user {
+      background-color: var(--color-bubble-user-bg);
+      color: var(--color-bubble-user-text);
+      border-bottom-right-radius: 0;
+      align-self: flex-end;
+      box-shadow: 0 4px 18px rgba(138, 121, 255, 0.6);
+    }
+
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+
+    .chatbot-input-area {
+      display: flex;
+      padding: 1.15rem 1.75rem;
+      background: white;
+      border-top: 1px solid #d5d7f1;
+      gap: 1rem;
+    }
+    .chatbot-input-area input[type="text"] {
+      flex-grow: 1;
+      font-family: "Inter", sans-serif;
+      font-size: 1.1rem;
+      border: 1px solid #b8b9db;
+      border-radius: var(--border-radius);
+      padding: 0.85rem 1.25rem;
+      color: var(--color-primary);
+      transition: border-color var(--transition);
+      box-shadow: inset 0 0 5px rgba(138, 121, 255, 0.1);
+    }
+    .chatbot-input-area input[type="text"]::placeholder {
+      color: var(--color-secondary);
+      font-style: italic;
+    }
+    .chatbot-input-area input[type="text"]:focus {
+      outline: none;
+      border-color: var(--color-accent);
+      background: #f9faff;
+      box-shadow: 0 0 8px var(--color-accent);
+    }
+    .chatbot-input-area button {
+      background-color: var(--color-accent);
+      border: none;
+      border-radius: var(--border-radius);
+      color: white;
+      font-weight: 700;
+      font-size: 1.15rem;
+      padding: 0 1.75rem;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px var(--color-accent-light);
+      letter-spacing: 0.03em;
+    }
+    .chatbot-input-area button:hover,
+    .chatbot-input-area button:focus {
+      background-color: #6f61ff;
+      outline: none;
+      box-shadow: 0 0 18px var(--color-accent);
+    }
+    .chatbot-input-area svg {
+      stroke: white;
+      width: 22px;
+      height: 22px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 720px) {
+      main {
+        margin: 3rem 1.5rem 3rem;
+        max-width: 720px;
+      }
+      header {
+        padding: 1rem 2rem;
+      }
+      .chatbot-widget {
+        width: 90vw;
+        right: 5vw;
+        left: 5vw;
+        bottom: 2rem;
+      }
+      section.features {
+        grid-template-columns: 1fr;
+        gap: 1.8rem;
+        padding: 0 1.5rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .chatbot-widget {
+        width: 100vw;
+        height: 60vh;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        border-radius: 0;
+      }
+      main {
+        margin: 3rem 1rem 2rem;
+        max-width: 100%;
+      }
+      .btn-primary {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" aria-label="ankit chatbox">ankit chatbox</div>
+    <nav>
+      <a href="#" tabindex="0">Home</a>
+      <a href="#" tabindex="0">Features</a>
+      <a href="#" tabindex="0">Contact</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Chat and Learn Digital Skills</h1>
+    <p>Get step-by-step guides and answers for WhatsApp, Paytm, Google Maps, and more! Select a section or ask your question below.</p>
+    <button class="btn-primary" type="button" onclick="scrollToChat()">Try the Chatbot</button>
+  </main>
+
+  <section class="features" aria-label="Digital Tools Sections">
+    <article tabindex="0" class="feature-card" aria-describedby="desc-whatsapp" onclick="selectExample('whatsapp')" onkeydown="if(event.key==='Enter')selectExample('whatsapp')">
+      <div class="feature-icon" aria-hidden="true">📱</div>
+      <h2 class="feature-title" id="desc-whatsapp">WhatsApp</h2>
+      <p class="feature-desc">Learn how to send photos, documents, and use WhatsApp effectively.</p>
+      <button class="feature-btn" type="button" aria-label="Select WhatsApp section" onclick="selectExample('whatsapp')">Select</button>
+    </article>
+
+    <article tabindex="0" class="feature-card" aria-describedby="desc-paytm" onclick="selectExample('paytm')" onkeydown="if(event.key==='Enter')selectExample('paytm')">
+      <div class="feature-icon" aria-hidden="true">💸</div>
+      <h2 class="feature-title" id="desc-paytm">Paytm</h2>
+      <p class="feature-desc">Get easy guides on using Paytm for payments, wallet, and more.</p>
+      <button class="feature-btn" type="button" aria-label="Select Paytm section" onclick="selectExample('paytm')">Select</button>
+    </article>
+
+    <article tabindex="0" class="feature-card" aria-describedby="desc-googlemaps" onclick="selectExample('googlemaps')" onkeydown="if(event.key==='Enter')selectExample('googlemaps')">
+      <div class="feature-icon" aria-hidden="true">🗺️</div>
+      <h2 class="feature-title" id="desc-googlemaps">Google Maps</h2>
+      <p class="feature-desc">Step by step help on navigating and using Google Maps.</p>
+      <button class="feature-btn" type="button" aria-label="Select Google Maps section" onclick="selectExample('googlemaps')">Select</button>
+    </article>
+  </section>
+
+  <aside class="chatbot-widget" role="region" aria-label="Chatbot interface">
+    <div class="chatbot-header" aria-live="polite" aria-atomic="true" aria-relevant="additions">Chatbot</div>
+    <div id="chatbot-messages" class="chatbot-messages" role="log" aria-live="polite" aria-relevant="additions"></div>
+    <form id="chatbot-form" class="chatbot-input-area" aria-label="Chatbot message form" autocomplete="off" novalidate>
+      <input id="user-input" type="text" placeholder="Type your message here..." aria-label="User chat input" required autocomplete="off" />
+      <button type="submit" aria-label="Send message" title="Send your message">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </form>
+  </aside>
+
+  <script>
+    // Scroll chatbot into view and focus input
+    function scrollToChat() {
+      const widget = document.querySelector('.chatbot-widget');
+      if (widget) {
+        widget.scrollIntoView({ behavior: 'smooth' });
+        const input = document.getElementById('user-input');
+        input?.focus();
+      }
+    }
+
+    (function() {
+      const form = document.getElementById('chatbot-form');
+      const userInput = document.getElementById('user-input');
+      const messages = document.getElementById('chatbot-messages');
+
+      // FAQ data with examples grouped by topic
+      const faqs = {
+        "whatsapp": {
+          "how do i send a photo on whatsapp": 
+            "1. Open WhatsApp and select the chat.<br>2. Tap the paperclip icon.<br>3. Choose 'Gallery' or 'Camera'.<br>4. Select photo and send.",
+          "how to send documents on whatsapp": 
+            "1. Open chat.<br>2. Tap paperclip icon.<br>3. Choose 'Document'.<br>4. Select file and send."
+        },
+        "paytm": {
+          "how to use paytm": 
+            "1. Download & open Paytm.<br>2. Register or login.<br>3. Add money or link bank account.<br>4. Pay bills, recharge or send money.",
+          "what is paytm": "Paytm is a digital payment platform for mobile recharges, bill payments, shopping and more."
+        },
+        "googlemaps": {
+          "how to use google maps": 
+            "1. Open Google Maps app.<br>2. Type destination.<br>3. Tap Directions.<br>4. Select transport mode.<br>5. Follow the route.",
+          "what is google maps": "Google Maps is a navigation app that helps you find places and get directions in real-time."
+        }
+      };
+
+      // Combined FAQ lookup flattened for quick access for AI fallback
+      function combinedFaqs() {
+        const combined = {};
+        for (const topic in faqs) {
+          Object.assign(combined, faqs[topic]);
+        }
+        return combined;
+      }
+
+      const combinedFAQ = combinedFaqs();
+
+      // Normalize input: lowercase, trim, remove punctuations
+      function normalize(text) {
+        return text.toLowerCase().trim().replace(/[.,!?]/g, "");
+      }
+
+      // Escape special chars and format new lines
+      function escapeAndFormat(text) {
+        return text.replace(/&/g, "&amp;")
+                   .replace(/</g, "&lt;")
+                   .replace(/>/g, "&gt;")
+                   .replace(/\n/g, "<br>");
+      }
+
+      function appendMessage(text, sender) {
+        const div = document.createElement("div");
+        div.className = `message ${sender}`;
+        div.innerHTML = escapeAndFormat(text);
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      function botGreeting() {
+        appendMessage("Hi! I’m your digital helper. Select WhatsApp, Paytm, or Google Maps or ask any question!", "bot");
+      }
+
+      // On selecting a section, seed example questions in input and display intro
+      window.selectExample = function(topic) {
+        const introMsgs = {
+          "whatsapp": "You're now viewing WhatsApp FAQs. Try questions like “How do I send a photo on WhatsApp?” or “How to send documents on WhatsApp?”",
+          "paytm": "You're now viewing Paytm FAQs. Ask things like “How to use Paytm?” or “What is Paytm?”",
+          "googlemaps": "You're now viewing Google Maps FAQs. Try “How to use Google Maps?” or “What is Google Maps?”"
+        };
+        appendMessage(introMsgs[topic] || "Topic selected. You can ask me questions now.", "bot");
+        userInput.value = "";
+        userInput.placeholder = "Try: " + Object.keys(faqs[topic]).slice(0,2).join(" / ");
+        scrollToChat();
+        userInput.focus();
+      };
+
+      // Advanced intelligent reply: tries exact and partial FAQ matches, then fallback to OpenAI ChatGPT API
+      async function getAIReply(question) {
+        const normalized = normalize(question);
+
+        // 1) Check exact FAQ match
+        if (combinedFAQ[normalized]) return combinedFAQ[normalized];
+
+        // 2) Partial match check
+        for (const key in combinedFAQ) {
+          if (normalized.includes(key)) return combinedFAQ[key];
+        }
+
+        // 3) Call OpenAI ChatGPT API (replace "YOUR_OPENAI_API_KEY" below with your actual API key)
+        try {
+          const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": "Bearer YOUR_OPENAI_API_KEY"
+            },
+            body: JSON.stringify({
+              model: "gpt-3.5-turbo",
+              messages: [
+                {role: "system", content: "You are a helpful assistant for a digital literacy chatbot."},
+                {role: "user", content: question}
+              ],
+              max_tokens: 150,
+              temperature: 0.6,
+              n: 1,
+              stop: null,
+            })
+          });
+          if (!response.ok) throw new Error("OpenAI API error");
+          const data = await response.json();
+          const text = data.choices?.[0]?.message?.content?.trim();
+          if (text) return text;
+          return "Sorry, I couldn't find an answer. Please try asking differently.";
+        } catch (err) {
+          console.error("OpenAI call failed:", err);
+          return "Apologies, AI service currently unavailable. Please try again later or ask a different question.";
+        }
+      }
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const inputText = userInput.value.trim();
+        if (!inputText) return;
+        appendMessage(inputText, "user");
+        userInput.disabled = true;
+        userInput.value = "";
+
+        // Show loading indicator
+        appendMessage("...", "bot");
+
+        const answer = await getAIReply(inputText);
+
+        // Remove loading indicator
+        const loadingElem = [...messages.querySelectorAll('.message.bot')].pop();
+        if (loadingElem?.textContent === "...") loadingElem.remove();
+
+        appendMessage(answer, "bot");
+
+        userInput.disabled = false;
+        userInput.focus();
+      });
+
+      botGreeting();
+    })();
+  </script>
+</body>
+</html>
+
